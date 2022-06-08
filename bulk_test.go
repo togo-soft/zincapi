@@ -1,6 +1,7 @@
 package zincapi
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -18,6 +19,5 @@ func TestBulkModels_Marshal(t *testing.T) {
 	models = append(models, NewBulkModelCreate("article", insertObj))
 
 	var m = BulkModels(models)
-	m.Marshal()
-	//fmt.Println(string())
+	fmt.Println(string(m.Marshal()))
 }

@@ -2,7 +2,6 @@ package zincapi
 
 import (
 	"bytes"
-	"fmt"
 	jsoniter "github.com/json-iterator/go"
 )
 
@@ -19,7 +18,6 @@ type BulkModels []BulkModel
 func (b *BulkModels) Marshal() []byte {
 	var buff bytes.Buffer
 	for _, v := range *b {
-		fmt.Println(string(v.Marshal()))
 		buff.Write(v.Marshal())
 	}
 	return buff.Bytes()
