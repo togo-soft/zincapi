@@ -29,12 +29,12 @@ type Message struct {
 func (u *User) CreateOrUpdate(p *User) (*UserResponse, error) {
 	b, err := jsoniter.Marshal(p)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "zinc create or update user: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "zinc create or update user: %v\n", err)
 		return nil, err
 	}
 	var resp = new(UserResponse)
 	if err := gout.PUT(getURI("/api/user")).SetHeader(getHeader()).SetBody(b).BindJSON(resp).Do(); err != nil {
-		fmt.Fprintf(os.Stderr, "zinc create or update user: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "zinc create or update user: %v\n", err)
 		return nil, err
 	}
 	return resp, nil
@@ -45,7 +45,7 @@ func (u *User) CreateOrUpdate(p *User) (*UserResponse, error) {
 func (u *User) Delete(uid string) (*UserResponse, error) {
 	var resp = new(UserResponse)
 	if err := gout.DELETE(getURI("/api/user/" + uid)).SetHeader(getHeader()).BindJSON(resp).Do(); err != nil {
-		fmt.Fprintf(os.Stderr, "zinc create or update user: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "zinc create or update user: %v\n", err)
 		return nil, err
 	}
 	return resp, nil

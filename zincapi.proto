@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+package zincapi;
+
+option go_package = "./;zincapi";
+

@@ -12,7 +12,7 @@ import (
 // StorageType 存储类型
 type StorageType string
 
-// 字段类型
+// FieldType 字段类型
 type FieldType string
 
 const (
@@ -27,7 +27,7 @@ const (
 	FieldTypeTime    FieldType = "time"
 )
 
-// 索引的字段
+// IndexField 索引的字段
 type IndexField struct {
 	Type          FieldType `json:"type"`
 	Index         bool      `json:"index"`
@@ -71,16 +71,16 @@ func (i *Index) SetIndexName(name string) *Index {
 }
 
 // Create 创建索引
-// https://docs.zincsearch.com/API%20Reference/create-index/
+// https://docs.zincsearch.com/api/index/create/
 func (i *Index) Create(record *Index) (*IndexResponse, error) {
 	doc, err := jsoniter.Marshal(record)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "zinc create index: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "zinc create index: %v\n", err)
 		return nil, err
 	}
 	var resp = new(IndexResponse)
 	if err := gout.PUT(getURI("/api/index")).SetHeader(getHeader()).SetBody(doc).BindJSON(resp).Do(); err != nil {
-		fmt.Fprintf(os.Stderr, "zinc create index: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "zinc create index: %v\n", err)
 		return nil, err
 	}
 	return resp, nil
@@ -91,48 +91,70 @@ func (i *Index) Create(record *Index) (*IndexResponse, error) {
 func (i *Index) Delete(indexName string) (*IndexResponse, error) {
 	var resp = new(IndexResponse)
 	if err := gout.DELETE(getURI("/api/index/" + indexName)).SetHeader(getHeader()).BindJSON(resp).Do(); err != nil {
-		fmt.Fprintf(os.Stderr, "zinc delete index: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "zinc delete index: %v\n", err)
 		return nil, err
 	}
 	return resp, nil
 }
 
 // List 罗列索引
-// https://docs.zincsearch.com/API%20Reference/list-indexes/
+// https://docs.zincsearch.com/api/index/list/
 func (i *Index) List() ([]*Index, error) {
 	var resp []*Index
 	if err := gout.GET(getURI("/api/index")).SetHeader(getHeader()).BindJSON(resp).Do(); err != nil {
-		fmt.Fprintf(os.Stderr, "zinc get index list: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "zinc get index list: %v\n", err)
 		return nil, err
 	}
 	return resp, nil
 }
 
 // GetMappings 获取所有索引的映射
-// https://docs.zincsearch.com/API%20Reference/get-index-mappings/
-func (i *Index) GetMappings(indexName string) (*Index, error) {
+// https://docs.zincsearch.com/api/index/get-mapping/
+func (i *Index) GetMappings() (*Index, error) {
 	var resp *Index
-	if err := gout.GET(getURI(fmt.Sprintf("/api/%s/_mappings", indexName))).SetHeader(getHeader()).BindJSON(resp).Do(); err != nil {
-		fmt.Fprintf(os.Stderr, "zinc get index mappings: %v\n", err)
+	if err := gout.GET(getURI(fmt.Sprintf("/api/%s/_mappings", i.Name))).SetHeader(getHeader()).BindJSON(resp).Do(); err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "zinc get index mappings: %v\n", err)
 		return nil, err
 	}
 	return resp, nil
 }
 
-// GetMappings 更新索引的映射
-// https://docs.zincsearch.com/API%20Reference/update-index-mappings/
+// UpdateMappings 更新索引的映射
+// https://docs.zincsearch.com/api/index/update-mapping/
 func (i *Index) UpdateMappings(indexName string, index *Index) (*Index, error) {
 	var resp *Index
 	b, err := jsoniter.Marshal(index)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "zinc create or update index mappings: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "zinc create or update index mappings: %v\n", err)
 		return nil, err
 	}
 	if err := gout.PUT(getURI(fmt.Sprintf("/api/%s/_mappings", indexName))).SetHeader(getHeader()).SetBody(b).BindJSON(resp).Do(); err != nil {
-		fmt.Fprintf(os.Stderr, "zinc create or update index mapping: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "zinc create or update index mapping: %v\n", err)
 		return nil, err
 	}
 	return resp, nil
+}
+
+// GetSettings 获取配置
+// https://docs.zincsearch.com/api/index/get-settings/
+func (i *Index) GetSettings() error {
+	var resp = new(Index)
+	if err := gout.GET(getURI(fmt.Sprintf("/api/%s/_settings", i.Name))).SetHeader(getHeader()).BindJSON(resp).Do(); err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "zinc get index settings: %v\n", err)
+		return err
+	}
+	return nil
+}
+
+// UpdateSettings 更新索引配置
+// https://docs.zincsearch.com/api/index/update-settings/
+func (i *Index) UpdateSettings() error {
+	var resp = new(Index)
+	if err := gout.PUT(getURI(fmt.Sprintf("/api/%s/_settings", i.Name))).SetHeader(getHeader()).BindJSON(resp).Do(); err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "zinc get index settings: %v\n", err)
+		return err
+	}
+	return nil
 }
 
 // Document 返回索引对应的文档操作流

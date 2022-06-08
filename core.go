@@ -53,9 +53,9 @@ type Version struct {
 
 // Version 获取zinc的版本
 func (d *Driver) Version() (*Version, error) {
-	var resp *Version
+	var resp = new(Version)
 	if err := gout.GET(getURI("/version")).SetHeader(getHeader()).BindJSON(resp).Do(); err != nil {
-		fmt.Fprintf(os.Stderr, "zinc get version: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "zinc get version: %v\n", err)
 		return nil, err
 	}
 	return resp, nil
@@ -64,8 +64,8 @@ func (d *Driver) Version() (*Version, error) {
 // Metrics 获取监控指标
 func (d *Driver) Metrics() (string, error) {
 	var resp string
-	if err := gout.GET(getURI("/metrics")).SetHeader(getHeader()).BindBody(resp).Do(); err != nil {
-		fmt.Fprintf(os.Stderr, "zinc get version: %v\n", err)
+	if err := gout.GET(getURI("/metrics")).SetHeader(getHeader()).BindBody(&resp).Do(); err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "zinc get version: %v\n", err)
 		return "", err
 	}
 	return resp, nil
