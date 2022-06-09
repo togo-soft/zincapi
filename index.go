@@ -100,8 +100,8 @@ func (i *Index) Delete(indexName string) (*IndexResponse, error) {
 // List 罗列索引
 // https://docs.zincsearch.com/api/index/list/
 func (i *Index) List() ([]*Index, error) {
-	var resp []*Index
-	if err := gout.GET(getURI("/api/index")).SetHeader(getHeader()).BindJSON(resp).Do(); err != nil {
+	var resp = make([]*Index, 0)
+	if err := gout.GET(getURI("/api/index")).SetHeader(getHeader()).BindJSON(&resp).Do(); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "zinc get index list: %v\n", err)
 		return nil, err
 	}
@@ -111,7 +111,7 @@ func (i *Index) List() ([]*Index, error) {
 // GetMappings 获取所有索引的映射
 // https://docs.zincsearch.com/api/index/get-mapping/
 func (i *Index) GetMappings() (*Index, error) {
-	var resp *Index
+	var resp = new(Index)
 	if err := gout.GET(getURI(fmt.Sprintf("/api/%s/_mappings", i.Name))).SetHeader(getHeader()).BindJSON(resp).Do(); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "zinc get index mappings: %v\n", err)
 		return nil, err
@@ -122,7 +122,7 @@ func (i *Index) GetMappings() (*Index, error) {
 // UpdateMappings 更新索引的映射
 // https://docs.zincsearch.com/api/index/update-mapping/
 func (i *Index) UpdateMappings(indexName string, index *Index) (*Index, error) {
-	var resp *Index
+	var resp = new(Index)
 	b, err := jsoniter.Marshal(index)
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "zinc create or update index mappings: %v\n", err)

@@ -23,18 +23,18 @@ type User struct {
 }
 
 type Hits struct {
-	Total    Total `json:"total"`
-	MaxScore int64 `json:"max_score"`
-	Hits     []Hit `json:"hits"`
+	Total    Total   `json:"total"`
+	MaxScore float64 `json:"max_score"`
+	Hits     []Hit   `json:"hits"`
 }
 
 type Hit struct {
-	Index     string `json:"_index"`
-	Type      string `json:"_type"`
-	ID        string `json:"_id"`
-	Score     int64  `json:"_score"`
-	Timestamp string `json:"@timestamp"`
-	Source    Source `json:"_source"`
+	Index     string  `json:"_index"`
+	Type      string  `json:"_type"`
+	ID        string  `json:"_id"`
+	Score     float64 `json:"_score"`
+	Timestamp string  `json:"@timestamp"`
+	Source    Source  `json:"_source"`
 }
 
 type Source struct {

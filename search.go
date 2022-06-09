@@ -52,7 +52,7 @@ func (s *Search) Search(filter QueryParam) (*SearchResponse, error) {
 		return nil, err
 	}
 	var resp = new(SearchResponse)
-	if err := gout.PUT(getURI(fmt.Sprintf("/api/%s/_search", s.scope.Name))).SetHeader(getHeader()).SetBody(b).BindJSON(resp).Do(); err != nil {
+	if err := gout.POST(getURI(fmt.Sprintf("/api/%s/_search", s.scope.Name))).Debug(true).SetHeader(getHeader()).SetBody(b).BindJSON(resp).Do(); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "zinc search: %v\n", err)
 		return nil, err
 	}
